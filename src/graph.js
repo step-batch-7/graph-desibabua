@@ -23,7 +23,7 @@ const generateDirectedPairs = function (paths) {
 
 const bfs = function (pairs, source, target) {
   const directedPairs = generateDirectedPairs(pairs);
-
+  
   const visitedPlaces = [];
   const queue = [source];
   const canEnqueued = (place) => !visitedPlaces.includes(place) && !queue.includes(place);
@@ -32,11 +32,10 @@ const bfs = function (pairs, source, target) {
     const place = queue.shift();
     visitedPlaces.push(place);
     if (place === target) return true;
-    directedPairs[place].forEach(newPlace => {
-      if (canEnqueued(newPlace)) queue.push(newPlace);
-    });
+    if (place in directedPairs) {
+      queue.push(...directedPairs[place].filter(canEnqueued));
+    }
   }
-
   return false;
 };
 
