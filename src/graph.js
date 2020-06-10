@@ -12,18 +12,17 @@ const generatePaths = function (reader,path,encoder) {
 
 const generateDirectedPairs = function (paths) {
   return paths.reduce((directedPaths, [from, to]) => {
-    if (from in directedPaths) {
-      directedPaths[from].push(to);
-    } else {
-      directedPaths[from] = [to];
+    if (!(from in directedPaths)) {
+      directedPaths[from] = [];
     }
+    directedPaths[from].push(to);
     return directedPaths;
   },{});
 }
 
 const bfs = function (pairs, source, target) {
   const directedPairs = generateDirectedPairs(pairs);
-  
+
   const visitedPlaces = [];
   const queue = [source];
   const canEnqueued = (place) => !visitedPlaces.includes(place) && !queue.includes(place);
