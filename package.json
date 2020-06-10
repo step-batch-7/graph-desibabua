@@ -1,0 +1,28 @@
+{
+  "name": "graph-desibabua",
+  "version": "1.0.0",
+  "description": "",
+  "main": "main.js",
+  "directories": {
+    "test": "test"
+  },
+  "scripts": {
+    "test": "mocha && nyc mocha",
+    "start": "node main.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/step-batch-7/graph-desibabua.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/step-batch-7/graph-desibabua/issues"
+  },
+  "homepage": "https://github.com/step-batch-7/graph-desibabua#readme",
+  "devDependencies": {
+    "mocha": "^7.2.0",
+    "nyc": "^15.1.0"
+  }
+}
