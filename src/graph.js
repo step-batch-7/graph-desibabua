@@ -39,4 +39,4 @@ const bfs = function (pairs, source, target) {
 };
 
 
-module.exports = {bfs, generatePaths};
+module.exports = {bfs, generatePaths };

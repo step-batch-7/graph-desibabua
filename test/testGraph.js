@@ -1,5 +1,6 @@
 const assert = require('chai').assert;
-const {bfs} = require('../src/graph');
+const sinon = require('sinon');
+const {bfs, generatePaths} = require('../src/graph');
 
 describe('bfs',function() {
   it('single node not connected to itself', function () {
@@ -60,7 +61,7 @@ describe('bfs',function() {
   });
 
   it('three nodes sparsely connected', function () {
-    const paths = [ ['aa', 'bb'], ['bb', 'cc'], ['cc', 'bb'], ];
+    const paths = [ ['aa', 'bb'], ['bb', 'cc'], ['cc', 'bb'] ];
     assert.isTrue(bfs(paths, 'aa', 'bb'));
     assert.isTrue(bfs(paths, 'bb', 'cc'));
     assert.isTrue(bfs(paths, 'aa', 'cc'));
@@ -69,5 +70,27 @@ describe('bfs',function() {
     assert.isTrue(bfs(paths, 'bb', 'bb'));
     assert.isFalse(bfs(paths, 'bb', 'aa'));
     assert.isFalse(bfs(paths, 'aa', 'aa'));
+  });
+
+  it('three nodes sparsely connected', function () {
+    const paths = [ ['aa', 'bb'], ['bb', 'cc'], ['cc', 'aa'] ];
+    assert.isTrue(bfs(paths, 'aa', 'bb'));
+    assert.isTrue(bfs(paths, 'bb', 'cc'));
+    assert.isTrue(bfs(paths, 'aa', 'cc'));
+    assert.isTrue(bfs(paths, 'cc', 'bb'));
+    assert.isTrue(bfs(paths, 'cc', 'cc'));
+    assert.isTrue(bfs(paths, 'bb', 'bb'));
+    assert.isTrue(bfs(paths, 'bb', 'aa'));
+    assert.isTrue(bfs(paths, 'aa', 'aa'));
+  });
+});
+
+
+describe('generateDirectedPairs',function() {
+  it('it should generate a key value pair of from to target place', function () {
+    const reader = sinon.fake.returns('| aa | bb |\n| aa | aa |');
+    const expectedValue = [ ['aa', 'bb'], ['aa', 'aa'] ];
+    assert.deepStrictEqual(generatePaths(reader, 'temp_path', 'encoder'), expectedValue);
+    assert.isTrue(reader.calledOnceWith('temp_path', 'encoder'));
   });
 });
