@@ -60,7 +60,7 @@ describe('bfs',function() {
     assert.isFalse(bfs(paths, 'dd', 'aa'));
   });
 
-  it('three nodes sparsely connected', function () {
+  it('three nodes moderately connected', function () {
     const paths = [ ['aa', 'bb'], ['bb', 'cc'], ['cc', 'bb'] ];
     assert.isTrue(bfs(paths, 'aa', 'bb'));
     assert.isTrue(bfs(paths, 'bb', 'cc'));
@@ -72,7 +72,7 @@ describe('bfs',function() {
     assert.isFalse(bfs(paths, 'aa', 'aa'));
   });
 
-  it('three nodes sparsely connected', function () {
+  it('three nodes perfectly connected', function () {
     const paths = [ ['aa', 'bb'], ['bb', 'cc'], ['cc', 'aa'] ];
     assert.isTrue(bfs(paths, 'aa', 'bb'));
     assert.isTrue(bfs(paths, 'bb', 'cc'));
