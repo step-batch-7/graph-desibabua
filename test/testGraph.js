@@ -35,4 +35,39 @@ describe('bfs',function() {
     assert.isTrue(bfs(paths, 'aa', 'aa'));
     assert.isTrue(bfs(paths, 'aa', 'bb'));
   });
+
+  it('two nodes sparsely connected', function () {
+    const paths = [ ['aa', 'bb'], ['bb', 'cc'], ];
+    assert.isTrue(bfs(paths, 'aa', 'bb'));
+    assert.isTrue(bfs(paths, 'bb', 'cc'));
+    assert.isTrue(bfs(paths, 'aa', 'cc'));
+    assert.isFalse(bfs(paths, 'cc', 'bb'));
+    assert.isFalse(bfs(paths, 'cc', 'aa'));
+    assert.isFalse(bfs(paths, 'bb', 'aa'));
+  });
+
+  it('three nodes sparsely connected', function () {
+    const paths = [ ['aa', 'bb'], ['bb', 'cc'], ['cc', 'dd'] ];
+    assert.isTrue(bfs(paths, 'aa', 'bb'));
+    assert.isTrue(bfs(paths, 'bb', 'cc'));
+    assert.isTrue(bfs(paths, 'aa', 'cc'));
+    assert.isTrue(bfs(paths, 'aa', 'dd'));
+    assert.isFalse(bfs(paths, 'cc', 'bb'));
+    assert.isFalse(bfs(paths, 'cc', 'aa'));
+    assert.isFalse(bfs(paths, 'bb', 'aa'));
+    assert.isFalse(bfs(paths, 'dd', 'cc'));
+    assert.isFalse(bfs(paths, 'dd', 'aa'));
+  });
+
+  it('three nodes sparsely connected', function () {
+    const paths = [ ['aa', 'bb'], ['bb', 'cc'], ['cc', 'bb'], ];
+    assert.isTrue(bfs(paths, 'aa', 'bb'));
+    assert.isTrue(bfs(paths, 'bb', 'cc'));
+    assert.isTrue(bfs(paths, 'aa', 'cc'));
+    assert.isTrue(bfs(paths, 'cc', 'bb'));
+    assert.isTrue(bfs(paths, 'cc', 'cc'));
+    assert.isTrue(bfs(paths, 'bb', 'bb'));
+    assert.isFalse(bfs(paths, 'bb', 'aa'));
+    assert.isFalse(bfs(paths, 'aa', 'aa'));
+  });
 });
