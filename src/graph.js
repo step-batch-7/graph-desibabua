@@ -24,7 +24,7 @@ const bfs = function (pairs, source, target) {
   const directedPairs = generateDirectedPairs(pairs);
 
   const visitedPlaces = [];
-  const queue = [source];
+  const queue = source in directedPairs ? [...directedPairs[source]] : [];
   const canEnqueued = (place) => !visitedPlaces.includes(place) && !queue.includes(place);
 
   while (queue.length) {
