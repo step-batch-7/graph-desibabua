@@ -10,21 +10,21 @@ const generatePaths = function (reader, path, encoder) {
   return Array.from(paths, separateFromTo);
 };
 
-const generateDirectedPairs = function (paths) {
-  return paths.reduce((directedPaths, [from, to]) => {
-    if (!(from in directedPaths)) {
-      directedPaths[from] = [];
+const generateGraph = function (paths) {
+  return paths.reduce((graph, [from, to]) => {
+    if (!(from in graph)) {
+      graph[from] = [];
     }
-    directedPaths[from].push(to);
-    return directedPaths;
+    graph[from].push(to);
+    return graph;
   }, {});
 };
 
 const bfs = function (pairs, source, target) {
-  const directedPairs = generateDirectedPairs(pairs);
+  const graph = generateGraph(pairs);
 
   const visitedPlaces = new Set();
-  const queue = directedPairs[source] || [];
+  const queue = graph[source] || [];
   const canEnqueued = (place) =>
     !visitedPlaces.has(place) && !queue.includes(place);
 
@@ -32,46 +32,46 @@ const bfs = function (pairs, source, target) {
     const place = queue.shift();
     visitedPlaces.add(place);
     if (place === target) return true;
-    if (place in directedPairs) {
-      queue.push(...directedPairs[place].filter(canEnqueued));
+    if (place in graph) {
+      queue.push(...graph[place].filter(canEnqueued));
     }
   }
   return false;
 };
 
-const dfs = function (directedPairs, source, target, visited) {
-  const child = directedPairs[source] || [];
-  const nonVisitedChild = child.filter((e) => !visited.has(e));
+const dfs = function (graph, source, target, visited) {
+  const siblings = graph[source] || [];
+  const nonVisitedSiblings = siblings.filter((sibling) => !visited.has(sibling));
   visited.add(source);
 
-  if (child.includes(target)) return true;
-  if (nonVisitedChild.length) {
-    return nonVisitedChild.some((e) =>
-      dfs(directedPairs, e, target, visited)
+  if (siblings.includes(target)) return true;
+  if (nonVisitedSiblings.length) {
+    return nonVisitedSiblings.some((sibling) =>
+      dfs(graph, sibling, target, visited)
     );
   }
   return false;
 };
 
-const find_path = function (directedPairs, source, target, visited) {
-  const child = directedPairs[source] || [];
-  const nonVisitedChild = child.filter((e) => !visited.has(e));
+const find_path = function (graph, source, target, visited) {
+  const siblings = graph[source] || [];
+  const nonVisitedSiblings = siblings.filter((sibling) => !visited.has(sibling));
   visited.add(source);
 
-  if (child.includes(target)) return [source, target ];
-  while (nonVisitedChild.length) {
-    const childToSearch = nonVisitedChild.shift();
-    const prevPath = find_path(directedPairs, childToSearch, target, visited);
+  if (siblings.includes(target)) return [source, target ];
+  while (nonVisitedSiblings.length) {
+    const childToSearch = nonVisitedSiblings.shift();
+    const prevPath = find_path(graph, childToSearch, target, visited);
     if (prevPath.length >= 1) return [source, ...prevPath];
   }
   return [];
 };
 
 const main = function (pairs, source, target) {
-  const directedPairs = generateDirectedPairs(pairs);
-  dfs(directedPairs, source, target, new Set());
-  find_path(directedPairs, source, target, new Set());
+  const graph = generateGraph(pairs);
+  dfs(graph, source, target, new Set());
+  find_path(graph, source, target, new Set());
   return 0;
 };
 
-module.exports = { dfs, find_path, bfs, generatePaths, generateDirectedPairs};
+module.exports = { dfs, find_path, bfs, generatePaths, generateGraph};
