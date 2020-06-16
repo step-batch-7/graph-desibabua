@@ -46,14 +46,31 @@ const search_node = function (directedPairs, source, target, visited) {
 
   if (child.includes(target)) return true;
   if (nonVisitedChild.length) {
-    return nonVisitedChild.some((e) => search_node(directedPairs, e, target, visited));
+    return nonVisitedChild.some((e) =>
+      search_node(directedPairs, e, target, visited)
+    );
   }
   return false;
+};
+
+const find_path = function (directedPairs, source, target, visited) {
+  const child = directedPairs[source] || [];
+  const nonVisitedChild = child.filter((e) => !visited.has(e));
+  visited.add(source);
+
+  if (child.includes(target)) return [source, target ];
+  while (nonVisitedChild.length) {
+    const childToSearch = nonVisitedChild.shift();
+    const prevPath = find_path(directedPairs, childToSearch, target, visited);
+    if (prevPath.length >= 1) return [source, ...prevPath];
+  }
+  return [];
 };
 
 const dfs = function (pairs, source, target) {
   const directedPairs = generateDirectedPairs(pairs);
   const visited = new Set();
+  console.log(find_path(directedPairs, source, target, new Set()));
   return search_node(directedPairs, source, target, visited);
 };
 
