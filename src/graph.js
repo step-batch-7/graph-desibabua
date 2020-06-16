@@ -41,27 +41,28 @@ const bfs = function (pairs, source, target) {
 
 const dfs = function (graph, source, target, visited) {
   const siblings = graph[source] || [];
-  const nonVisitedSiblings = siblings.filter((sibling) => !visited.has(sibling));
-  visited.add(source);
-
   if (siblings.includes(target)) return true;
-  if (nonVisitedSiblings.length) {
-    return nonVisitedSiblings.some((sibling) =>
-      dfs(graph, sibling, target, visited)
-    );
+  while (siblings.length) {
+    const sibling = siblings.shift();
+    if (!visited.has(sibling) && dfs(graph, sibling, target, visited)) {
+      return true;
+    }
   }
+  visited.add(source);
   return false;
 };
 
 const find_path = function (graph, source, target, visited) {
   const siblings = graph[source] || [];
-  const nonVisitedSiblings = siblings.filter((sibling) => !visited.has(sibling));
+  const nonVisitedSiblings = siblings.filter(
+    (sibling) => !visited.has(sibling)
+  );
   visited.add(source);
 
-  if (siblings.includes(target)) return [source, target ];
+  if (siblings.includes(target)) return [source, target];
   while (nonVisitedSiblings.length) {
-    const childToSearch = nonVisitedSiblings.shift();
-    const prevPath = find_path(graph, childToSearch, target, visited);
+    const sibling = nonVisitedSiblings.shift();
+    const prevPath = find_path(graph, sibling, target, visited);
     if (prevPath.length >= 1) return [source, ...prevPath];
   }
   return [];
@@ -74,4 +75,4 @@ const main = function (pairs, source, target) {
   return 0;
 };
 
-module.exports = { dfs, find_path, bfs, generatePaths, generateGraph};
+module.exports = { dfs, find_path, bfs, generatePaths, generateGraph };
