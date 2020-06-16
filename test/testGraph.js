@@ -1,6 +1,6 @@
 const assert = require('chai').assert;
 const sinon = require('sinon');
-const {dfs, bfs, generatePaths} = require('../src/graph');
+const {dfs, bfs, generatePaths, generateDirectedPairs} = require('../src/graph');
 
 describe('bfs',function() {
   it('single node not connected to itself', function () {
@@ -98,9 +98,10 @@ describe('generateDirectedPairs',function() {
 describe('dfs', function () {
   it('single node not connected to itself', function () {
     const paths = [['aa', 'bb']];
-    assert.isFalse(dfs(paths, 'aa', 'aa'));
-    assert.isFalse(dfs(paths, 'aa', 'cc'));
-    assert.isTrue(dfs(paths, 'aa', 'bb'));
+    const directed_path = generateDirectedPairs(paths);
+    assert.isFalse(dfs(directed_path, 'aa', 'aa', new Set()));
+    assert.isFalse(dfs(directed_path, 'aa', 'cc', new Set()));
+    assert.isTrue(dfs(directed_path, 'aa', 'bb', new Set()));
   });
 
   it('single node connected to itself', function () {
@@ -108,9 +109,10 @@ describe('dfs', function () {
       ['aa', 'bb'],
       ['aa', 'aa'],
     ];
-    assert.isTrue(dfs(paths, 'aa', 'aa'));
-    assert.isFalse(dfs(paths, 'aa', 'cc'));
-    assert.isTrue(dfs(paths, 'aa', 'bb'));
+    const directed_path = generateDirectedPairs(paths);
+    assert.isTrue(dfs(directed_path, 'aa', 'aa', new Set()));
+    assert.isFalse(dfs(directed_path, 'aa', 'cc', new Set()));
+    assert.isTrue(dfs(directed_path, 'aa', 'bb', new Set()));
   });
 
   it('two nodes not connected', function () {
@@ -118,14 +120,15 @@ describe('dfs', function () {
       ['aa', 'bb'],
       ['cc', 'dd'],
     ];
-    assert.isFalse(dfs(paths, 'bb', 'bb'));
-    assert.isFalse(dfs(paths, 'aa', 'cc'));
-    assert.isFalse(dfs(paths, 'aa', 'dd'));
-    assert.isFalse(dfs(paths, 'bb', 'cc'));
-    assert.isFalse(dfs(paths, 'cc', 'aa'));
-    assert.isFalse(dfs(paths, 'cc', 'bb'));
-    assert.isTrue(dfs(paths, 'cc', 'dd'));
-    assert.isTrue(dfs(paths, 'aa', 'bb'));
+    const directed_path = generateDirectedPairs(paths);
+    assert.isFalse(dfs(directed_path, 'bb', 'bb', new Set()));
+    assert.isFalse(dfs(directed_path, 'aa', 'cc', new Set()));
+    assert.isFalse(dfs(directed_path, 'aa', 'dd', new Set()));
+    assert.isFalse(dfs(directed_path, 'bb', 'cc', new Set()));
+    assert.isFalse(dfs(directed_path, 'cc', 'aa', new Set()));
+    assert.isFalse(dfs(directed_path, 'cc', 'bb', new Set()));
+    assert.isTrue(dfs(directed_path, 'cc', 'dd', new Set()));
+    assert.isTrue(dfs(directed_path, 'aa', 'bb', new Set()));
   });
 
   it('two nodes perfectly connected', function () {
@@ -133,10 +136,11 @@ describe('dfs', function () {
       ['aa', 'bb'],
       ['bb', 'aa'],
     ];
-    assert.isTrue(dfs(paths, 'bb', 'bb'));
-    assert.isTrue(dfs(paths, 'bb', 'aa'));
-    assert.isTrue(dfs(paths, 'aa', 'aa'));
-    assert.isTrue(dfs(paths, 'aa', 'bb'));
+    const directed_path = generateDirectedPairs(paths);
+    assert.isTrue(dfs(directed_path, 'bb', 'bb', new Set()));
+    assert.isTrue(dfs(directed_path, 'bb', 'aa', new Set()));
+    assert.isTrue(dfs(directed_path, 'aa', 'aa', new Set()));
+    assert.isTrue(dfs(directed_path, 'aa', 'bb', new Set()));
   });
 
   it('two nodes sparsely connected', function () {
@@ -144,12 +148,13 @@ describe('dfs', function () {
       ['aa', 'bb'],
       ['bb', 'cc'],
     ];
-    assert.isTrue(dfs(paths, 'aa', 'bb'));
-    assert.isTrue(dfs(paths, 'bb', 'cc'));
-    assert.isTrue(dfs(paths, 'aa', 'cc'));
-    assert.isFalse(dfs(paths, 'cc', 'bb'));
-    assert.isFalse(dfs(paths, 'cc', 'aa'));
-    assert.isFalse(dfs(paths, 'bb', 'aa'));
+    const directed_path = generateDirectedPairs(paths);
+    assert.isTrue(dfs(directed_path, 'aa', 'bb', new Set()));
+    assert.isTrue(dfs(directed_path, 'bb', 'cc', new Set()));
+    assert.isTrue(dfs(directed_path, 'aa', 'cc', new Set()));
+    assert.isFalse(dfs(directed_path, 'cc', 'bb', new Set()));
+    assert.isFalse(dfs(directed_path, 'cc', 'aa', new Set()));
+    assert.isFalse(dfs(directed_path, 'bb', 'aa', new Set()));
   });
 
   it('three nodes sparsely connected', function () {
@@ -158,15 +163,16 @@ describe('dfs', function () {
       ['bb', 'cc'],
       ['cc', 'dd'],
     ];
-    assert.isTrue(dfs(paths, 'aa', 'bb'));
-    assert.isTrue(dfs(paths, 'bb', 'cc'));
-    assert.isTrue(dfs(paths, 'aa', 'cc'));
-    assert.isTrue(dfs(paths, 'aa', 'dd'));
-    assert.isFalse(dfs(paths, 'cc', 'bb'));
-    assert.isFalse(dfs(paths, 'cc', 'aa'));
-    assert.isFalse(dfs(paths, 'bb', 'aa'));
-    assert.isFalse(dfs(paths, 'dd', 'cc'));
-    assert.isFalse(dfs(paths, 'dd', 'aa'));
+    const directed_path = generateDirectedPairs(paths);
+    assert.isTrue(dfs(directed_path, 'aa', 'bb', new Set()));
+    assert.isTrue(dfs(directed_path, 'bb', 'cc', new Set()));
+    assert.isTrue(dfs(directed_path, 'aa', 'cc', new Set()));
+    assert.isTrue(dfs(directed_path, 'aa', 'dd', new Set()));
+    assert.isFalse(dfs(directed_path, 'cc', 'bb', new Set()));
+    assert.isFalse(dfs(directed_path, 'cc', 'aa', new Set()));
+    assert.isFalse(dfs(directed_path, 'bb', 'aa', new Set()));
+    assert.isFalse(dfs(directed_path, 'dd', 'cc', new Set()));
+    assert.isFalse(dfs(directed_path, 'dd', 'aa', new Set()));
   });
 
   it('three nodes moderately connected', function () {
@@ -175,14 +181,15 @@ describe('dfs', function () {
       ['bb', 'cc'],
       ['cc', 'bb'],
     ];
-    assert.isTrue(dfs(paths, 'aa', 'bb'));
-    assert.isTrue(dfs(paths, 'bb', 'cc'));
-    assert.isTrue(dfs(paths, 'aa', 'cc'));
-    assert.isTrue(dfs(paths, 'cc', 'bb'));
-    assert.isTrue(dfs(paths, 'cc', 'cc'));
-    assert.isTrue(dfs(paths, 'bb', 'bb'));
-    assert.isFalse(dfs(paths, 'bb', 'aa'));
-    assert.isFalse(dfs(paths, 'aa', 'aa'));
+    const directed_path = generateDirectedPairs(paths);
+    assert.isTrue(dfs(directed_path, 'aa', 'bb', new Set()));
+    assert.isTrue(dfs(directed_path, 'bb', 'cc', new Set()));
+    assert.isTrue(dfs(directed_path, 'aa', 'cc', new Set()));
+    assert.isTrue(dfs(directed_path, 'cc', 'bb', new Set()));
+    assert.isTrue(dfs(directed_path, 'cc', 'cc', new Set()));
+    assert.isTrue(dfs(directed_path, 'bb', 'bb', new Set()));
+    assert.isFalse(dfs(directed_path, 'bb', 'aa', new Set()));
+    assert.isFalse(dfs(directed_path, 'aa', 'aa', new Set()));
   });
 
   it('three nodes perfectly connected', function () {
@@ -191,13 +198,14 @@ describe('dfs', function () {
       ['bb', 'cc'],
       ['cc', 'aa'],
     ];
-    assert.isTrue(dfs(paths, 'aa', 'bb'));
-    assert.isTrue(dfs(paths, 'bb', 'cc'));
-    assert.isTrue(dfs(paths, 'aa', 'cc'));
-    assert.isTrue(dfs(paths, 'cc', 'bb'));
-    assert.isTrue(dfs(paths, 'cc', 'cc'));
-    assert.isTrue(dfs(paths, 'bb', 'bb'));
-    assert.isTrue(dfs(paths, 'bb', 'aa'));
-    assert.isTrue(dfs(paths, 'aa', 'aa'));
+    const directed_path = generateDirectedPairs(paths);
+    assert.isTrue(dfs(directed_path, 'aa', 'bb', new Set()));
+    assert.isTrue(dfs(directed_path, 'bb', 'cc', new Set()));
+    assert.isTrue(dfs(directed_path, 'aa', 'cc', new Set()));
+    assert.isTrue(dfs(directed_path, 'cc', 'bb', new Set()));
+    assert.isTrue(dfs(directed_path, 'cc', 'cc', new Set()));
+    assert.isTrue(dfs(directed_path, 'bb', 'bb', new Set()));
+    assert.isTrue(dfs(directed_path, 'bb', 'aa', new Set()));
+    assert.isTrue(dfs(directed_path, 'aa', 'aa', new Set()));
   });
 });

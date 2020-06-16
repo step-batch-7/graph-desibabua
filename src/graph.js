@@ -39,7 +39,7 @@ const bfs = function (pairs, source, target) {
   return false;
 };
 
-const search_node = function (directedPairs, source, target, visited) {
+const dfs = function (directedPairs, source, target, visited) {
   const child = directedPairs[source] || [];
   const nonVisitedChild = child.filter((e) => !visited.has(e));
   visited.add(source);
@@ -47,7 +47,7 @@ const search_node = function (directedPairs, source, target, visited) {
   if (child.includes(target)) return true;
   if (nonVisitedChild.length) {
     return nonVisitedChild.some((e) =>
-      search_node(directedPairs, e, target, visited)
+      dfs(directedPairs, e, target, visited)
     );
   }
   return false;
@@ -67,11 +67,11 @@ const find_path = function (directedPairs, source, target, visited) {
   return [];
 };
 
-const dfs = function (pairs, source, target) {
+const main = function (pairs, source, target) {
   const directedPairs = generateDirectedPairs(pairs);
-  const visited = new Set();
-  console.log(find_path(directedPairs, source, target, new Set()));
-  return search_node(directedPairs, source, target, visited);
+  dfs(directedPairs, source, target, new Set());
+  find_path(directedPairs, source, target, new Set());
+  return 0;
 };
 
-module.exports = { dfs, bfs, generatePaths };
+module.exports = { dfs, find_path, bfs, generatePaths, generateDirectedPairs};
