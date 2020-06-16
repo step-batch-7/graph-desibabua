@@ -40,29 +40,27 @@ const bfs = function (pairs, source, target) {
 };
 
 const dfs = function (graph, source, target, visited) {
-  const siblings = graph[source] || [];
+  visited.add(source);
+  const siblings = (graph[source] || []).slice();
+
   if (siblings.includes(target)) return true;
   while (siblings.length) {
     const sibling = siblings.shift();
-    if (!visited.has(sibling) && dfs(graph, sibling, target, visited)) {
-      return true;
+    if (!visited.has(sibling)) {
+      return dfs(graph, sibling, target, visited);
     }
   }
-  visited.add(source);
   return false;
 };
 
 const find_path = function (graph, source, target, visited) {
-  const siblings = graph[source] || [];
-  const nonVisitedSiblings = siblings.filter(
-    (sibling) => !visited.has(sibling)
-  );
   visited.add(source);
+  const siblings = (graph[source] || []).slice();
 
   if (siblings.includes(target)) return [source, target];
-  while (nonVisitedSiblings.length) {
-    const sibling = nonVisitedSiblings.shift();
-    const prevPath = find_path(graph, sibling, target, visited);
+  while (siblings.length) {
+    const sibling = siblings.shift();
+    const prevPath = !visited.has(sibling) ? find_path(graph, sibling, target, visited) : [];
     if (prevPath.length >= 1) return [source, ...prevPath];
   }
   return [];

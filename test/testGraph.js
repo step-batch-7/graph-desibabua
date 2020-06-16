@@ -1,6 +1,6 @@
 const assert = require('chai').assert;
 const sinon = require('sinon');
-const {dfs, bfs, generatePaths, generateGraph} = require('../src/graph');
+const {dfs, bfs, generatePaths, generateGraph, find_path} = require('../src/graph');
 
 describe('bfs',function() {
   it('single node not connected to itself', function () {
@@ -98,9 +98,10 @@ describe('generateGraph',function() {
 describe('dfs', function () {
   it('single node not connected to itself', function () {
     const paths = [['aa', 'bb']];
-    assert.isFalse(dfs(generateGraph(paths), 'aa', 'aa', new Set()));
-    assert.isFalse(dfs(generateGraph(paths), 'aa', 'cc', new Set()));
-    assert.isTrue(dfs(generateGraph(paths), 'aa', 'bb', new Set()));
+    const graph = generateGraph(paths);
+    assert.isFalse(dfs(graph, 'aa', 'aa', new Set()));
+    assert.isFalse(dfs(graph, 'aa', 'cc', new Set()));
+    assert.isTrue(dfs(graph, 'aa', 'bb', new Set()));
   });
 
   it('single node connected to itself', function () {
@@ -108,9 +109,10 @@ describe('dfs', function () {
       ['aa', 'bb'],
       ['aa', 'aa'],
     ];
-    assert.isTrue(dfs(generateGraph(paths), 'aa', 'aa', new Set()));
-    assert.isFalse(dfs(generateGraph(paths), 'aa', 'cc', new Set()));
-    assert.isTrue(dfs(generateGraph(paths), 'aa', 'bb', new Set()));
+    const graph = generateGraph(paths);
+    assert.isTrue(dfs(graph, 'aa', 'aa', new Set()));
+    assert.isFalse(dfs(graph, 'aa', 'cc', new Set()));
+    assert.isTrue(dfs(graph, 'aa', 'bb', new Set()));
   });
 
   it('two nodes not connected', function () {
@@ -118,14 +120,15 @@ describe('dfs', function () {
       ['aa', 'bb'],
       ['cc', 'dd'],
     ];
-    assert.isFalse(dfs(generateGraph(paths), 'bb', 'bb', new Set()));
-    assert.isFalse(dfs(generateGraph(paths), 'aa', 'cc', new Set()));
-    assert.isFalse(dfs(generateGraph(paths), 'aa', 'dd', new Set()));
-    assert.isFalse(dfs(generateGraph(paths), 'bb', 'cc', new Set()));
-    assert.isFalse(dfs(generateGraph(paths), 'cc', 'aa', new Set()));
-    assert.isFalse(dfs(generateGraph(paths), 'cc', 'bb', new Set()));
-    assert.isTrue(dfs(generateGraph(paths), 'cc', 'dd', new Set()));
-    assert.isTrue(dfs(generateGraph(paths), 'aa', 'bb', new Set()));
+    const graph = generateGraph(paths);
+    assert.isFalse(dfs(graph, 'bb', 'bb', new Set()));
+    assert.isFalse(dfs(graph, 'aa', 'cc', new Set()));
+    assert.isFalse(dfs(graph, 'aa', 'dd', new Set()));
+    assert.isFalse(dfs(graph, 'bb', 'cc', new Set()));
+    assert.isFalse(dfs(graph, 'cc', 'aa', new Set()));
+    assert.isFalse(dfs(graph, 'cc', 'bb', new Set()));
+    assert.isTrue(dfs(graph, 'cc', 'dd', new Set()));
+    assert.isTrue(dfs(graph, 'aa', 'bb', new Set()));
   });
 
   it('two nodes perfectly connected', function () {
@@ -133,10 +136,11 @@ describe('dfs', function () {
       ['aa', 'bb'],
       ['bb', 'aa'],
     ];
-    assert.isTrue(dfs(generateGraph(paths), 'bb', 'bb', new Set()));
-    assert.isTrue(dfs(generateGraph(paths), 'bb', 'aa', new Set()));
-    assert.isTrue(dfs(generateGraph(paths), 'aa', 'aa', new Set()));
-    assert.isTrue(dfs(generateGraph(paths), 'aa', 'bb', new Set()));
+    const graph = generateGraph(paths);
+    assert.isTrue(dfs(graph, 'bb', 'bb', new Set()));
+    assert.isTrue(dfs(graph, 'bb', 'aa', new Set()));
+    assert.isTrue(dfs(graph, 'aa', 'aa', new Set()));
+    assert.isTrue(dfs(graph, 'aa', 'bb', new Set()));
   });
 
   it('two nodes sparsely connected', function () {
@@ -144,12 +148,13 @@ describe('dfs', function () {
       ['aa', 'bb'],
       ['bb', 'cc'],
     ];
-    assert.isTrue(dfs(generateGraph(paths), 'aa', 'bb', new Set()));
-    assert.isTrue(dfs(generateGraph(paths), 'bb', 'cc', new Set()));
-    assert.isTrue(dfs(generateGraph(paths), 'aa', 'cc', new Set()));
-    assert.isFalse(dfs(generateGraph(paths), 'cc', 'bb', new Set()));
-    assert.isFalse(dfs(generateGraph(paths), 'cc', 'aa', new Set()));
-    assert.isFalse(dfs(generateGraph(paths), 'bb', 'aa', new Set()));
+    const graph = generateGraph(paths);
+    assert.isTrue(dfs(graph, 'aa', 'bb', new Set()));
+    assert.isTrue(dfs(graph, 'bb', 'cc', new Set()));
+    assert.isTrue(dfs(graph, 'aa', 'cc', new Set()));
+    assert.isFalse(dfs(graph, 'cc', 'bb', new Set()));
+    assert.isFalse(dfs(graph, 'cc', 'aa', new Set()));
+    assert.isFalse(dfs(graph, 'bb', 'aa', new Set()));
   });
 
   it('three nodes sparsely connected', function () {
@@ -158,15 +163,16 @@ describe('dfs', function () {
       ['bb', 'cc'],
       ['cc', 'dd'],
     ];
-    assert.isTrue(dfs(generateGraph(paths), 'aa', 'bb', new Set()));
-    assert.isTrue(dfs(generateGraph(paths), 'bb', 'cc', new Set()));
-    assert.isTrue(dfs(generateGraph(paths), 'aa', 'cc', new Set()));
-    assert.isTrue(dfs(generateGraph(paths), 'aa', 'dd', new Set()));
-    assert.isFalse(dfs(generateGraph(paths), 'cc', 'bb', new Set()));
-    assert.isFalse(dfs(generateGraph(paths), 'cc', 'aa', new Set()));
-    assert.isFalse(dfs(generateGraph(paths), 'bb', 'aa', new Set()));
-    assert.isFalse(dfs(generateGraph(paths), 'dd', 'cc', new Set()));
-    assert.isFalse(dfs(generateGraph(paths), 'dd', 'aa', new Set()));
+    const graph = generateGraph(paths);
+    assert.isTrue(dfs(graph, 'aa', 'bb', new Set()));
+    assert.isTrue(dfs(graph, 'bb', 'cc', new Set()));
+    assert.isTrue(dfs(graph, 'aa', 'cc', new Set()));
+    assert.isTrue(dfs(graph, 'aa', 'dd', new Set()));
+    assert.isFalse(dfs(graph, 'cc', 'bb', new Set()));
+    assert.isFalse(dfs(graph, 'cc', 'aa', new Set()));
+    assert.isFalse(dfs(graph, 'bb', 'aa', new Set()));
+    assert.isFalse(dfs(graph, 'dd', 'cc', new Set()));
+    assert.isFalse(dfs(graph, 'dd', 'aa', new Set()));
   });
 
   it('three nodes moderately connected', function () {
@@ -175,14 +181,15 @@ describe('dfs', function () {
       ['bb', 'cc'],
       ['cc', 'bb'],
     ];
-    assert.isTrue(dfs(generateGraph(paths), 'aa', 'bb', new Set()));
-    assert.isTrue(dfs(generateGraph(paths), 'bb', 'cc', new Set()));
-    assert.isTrue(dfs(generateGraph(paths), 'aa', 'cc', new Set()));
-    assert.isTrue(dfs(generateGraph(paths), 'cc', 'bb', new Set()));
-    assert.isTrue(dfs(generateGraph(paths), 'cc', 'cc', new Set()));
-    assert.isTrue(dfs(generateGraph(paths), 'bb', 'bb', new Set()));
-    assert.isFalse(dfs(generateGraph(paths), 'bb', 'aa', new Set()));
-    assert.isFalse(dfs(generateGraph(paths), 'aa', 'aa', new Set()));
+    const graph = generateGraph(paths);
+    assert.isTrue(dfs(graph, 'aa', 'bb', new Set()));
+    assert.isTrue(dfs(graph, 'bb', 'cc', new Set()));
+    assert.isTrue(dfs(graph, 'aa', 'cc', new Set()));
+    assert.isTrue(dfs(graph, 'cc', 'bb', new Set()));
+    assert.isTrue(dfs(graph, 'cc', 'cc', new Set()));
+    assert.isTrue(dfs(graph, 'bb', 'bb', new Set()));
+    assert.isFalse(dfs(graph, 'bb', 'aa', new Set()));
+    assert.isFalse(dfs(graph, 'aa', 'aa', new Set()));
   });
 
   it('three nodes perfectly connected', function () {
@@ -191,13 +198,129 @@ describe('dfs', function () {
       ['bb', 'cc'],
       ['cc', 'aa'],
     ];
-    assert.isTrue(dfs(generateGraph(paths), 'aa', 'bb', new Set()));
-    assert.isTrue(dfs(generateGraph(paths), 'bb', 'cc', new Set()));
-    assert.isTrue(dfs(generateGraph(paths), 'aa', 'cc', new Set()));
-    assert.isTrue(dfs(generateGraph(paths), 'cc', 'bb', new Set()));
-    assert.isTrue(dfs(generateGraph(paths), 'cc', 'cc', new Set()));
-    assert.isTrue(dfs(generateGraph(paths), 'bb', 'bb', new Set()));
-    assert.isTrue(dfs(generateGraph(paths), 'bb', 'aa', new Set()));
-    assert.isTrue(dfs(generateGraph(paths), 'aa', 'aa', new Set()));
+    const graph = generateGraph(paths);
+    assert.isTrue(dfs(graph, 'aa', 'bb', new Set()));
+    assert.isTrue(dfs(graph, 'bb', 'cc', new Set()));
+    assert.isTrue(dfs(graph, 'aa', 'cc', new Set()));
+    assert.isTrue(dfs(graph, 'cc', 'bb', new Set()));
+    assert.isTrue(dfs(graph, 'cc', 'cc', new Set()));
+    assert.isTrue(dfs(graph, 'bb', 'bb', new Set()));
+    assert.isTrue(dfs(graph, 'bb', 'aa', new Set()));
+    assert.isTrue(dfs(graph, 'aa', 'aa', new Set()));
+  });
+});
+
+describe('find_path', function () {
+  it('single node not connected to itself', function () {
+    const paths = [['aa', 'bb']];
+    const graph = generateGraph(paths);
+    assert.deepStrictEqual(find_path(graph, 'aa', 'aa', new Set()),[]);
+    assert.deepStrictEqual(find_path(graph, 'aa', 'cc', new Set()),[]);
+    assert.deepStrictEqual(find_path(graph, 'aa', 'bb', new Set()),[ 'aa', 'bb' ]);
+  });
+
+  it('single node connected to itself', function () {
+    const paths = [
+      ['aa', 'bb'],
+      ['aa', 'aa'],
+    ];
+    const graph = generateGraph(paths);
+    assert.deepStrictEqual(find_path(graph, 'aa', 'aa', new Set()),[ 'aa', 'aa' ]);
+    assert.deepStrictEqual(find_path(graph, 'aa', 'cc', new Set()),[]);
+    assert.deepStrictEqual(find_path(graph, 'aa', 'bb', new Set()),[ 'aa', 'bb' ]);
+  });
+
+  it('two nodes not connected', function () {
+    const paths = [
+      ['aa', 'bb'],
+      ['cc', 'dd'],
+    ];
+    const graph = generateGraph(paths);
+    assert.deepStrictEqual(find_path(graph, 'bb', 'bb', new Set()),[]);
+    assert.deepStrictEqual(find_path(graph, 'aa', 'cc', new Set()),[]);
+    assert.deepStrictEqual(find_path(graph, 'aa', 'dd', new Set()),[]);
+    assert.deepStrictEqual(find_path(graph, 'bb', 'cc', new Set()),[]);
+    assert.deepStrictEqual(find_path(graph, 'cc', 'aa', new Set()),[]);
+    assert.deepStrictEqual(find_path(graph, 'cc', 'bb', new Set()),[]);
+    assert.deepStrictEqual(find_path(graph, 'cc', 'dd', new Set()),[ 'cc', 'dd' ]);
+    assert.deepStrictEqual(find_path(graph, 'aa', 'bb', new Set()),[ 'aa', 'bb' ]);
+  });
+
+  it('two nodes perfectly connected', function () {
+    const paths = [
+      ['aa', 'bb'],
+      ['bb', 'aa'],
+    ];
+    const graph = generateGraph(paths);
+    assert.deepStrictEqual(find_path(graph, 'bb', 'bb', new Set()),[ 'bb', 'aa', 'bb' ]);
+    assert.deepStrictEqual(find_path(graph, 'bb', 'aa', new Set()),[ 'bb', 'aa' ]);
+    assert.deepStrictEqual(find_path(graph, 'aa', 'aa', new Set()),[ 'aa', 'bb', 'aa' ]);
+    assert.deepStrictEqual(find_path(graph, 'aa', 'bb', new Set()),[ 'aa', 'bb' ]);
+  });
+
+  it('two nodes sparsely connected', function () {
+    const paths = [
+      ['aa', 'bb'],
+      ['bb', 'cc'],
+    ];
+    const graph = generateGraph(paths);
+    assert.deepStrictEqual(find_path(graph, 'aa', 'bb', new Set()),[ 'aa', 'bb' ]);
+    assert.deepStrictEqual(find_path(graph, 'bb', 'cc', new Set()),[ 'bb', 'cc' ]);
+    assert.deepStrictEqual(find_path(graph, 'aa', 'cc', new Set()),[ 'aa', 'bb', 'cc' ]);
+    assert.deepStrictEqual(find_path(graph, 'cc', 'bb', new Set()),[]);
+    assert.deepStrictEqual(find_path(graph, 'cc', 'aa', new Set()),[]);
+    assert.deepStrictEqual(find_path(graph, 'bb', 'aa', new Set()),[]);
+  });
+
+  it('three nodes sparsely connected', function () {
+    const paths = [
+      ['aa', 'bb'],
+      ['bb', 'cc'],
+      ['cc', 'dd'],
+    ];
+    const graph = generateGraph(paths);
+    assert.deepStrictEqual(find_path(graph, 'aa', 'bb', new Set()),[ 'aa', 'bb' ]);
+    assert.deepStrictEqual(find_path(graph, 'bb', 'cc', new Set()),[ 'bb', 'cc' ]);
+    assert.deepStrictEqual(find_path(graph, 'aa', 'cc', new Set()),[ 'aa', 'bb', 'cc' ]);
+    assert.deepStrictEqual(find_path(graph, 'aa', 'dd', new Set()),[ 'aa', 'bb', 'cc', 'dd' ]);
+    assert.deepStrictEqual(find_path(graph, 'cc', 'bb', new Set()),[]);
+    assert.deepStrictEqual(find_path(graph, 'cc', 'aa', new Set()),[]);
+    assert.deepStrictEqual(find_path(graph, 'bb', 'aa', new Set()),[]);
+    assert.deepStrictEqual(find_path(graph, 'dd', 'cc', new Set()),[]);
+    assert.deepStrictEqual(find_path(graph, 'dd', 'aa', new Set()),[]);
+  });
+
+  it('three nodes moderately connected', function () {
+    const paths = [
+      ['aa', 'bb'],
+      ['bb', 'cc'],
+      ['cc', 'bb'],
+    ];
+    const graph = generateGraph(paths);
+    assert.deepStrictEqual(find_path(graph, 'aa', 'bb', new Set()),[ 'aa', 'bb' ]);
+    assert.deepStrictEqual(find_path(graph, 'bb', 'cc', new Set()),[ 'bb', 'cc' ]);
+    assert.deepStrictEqual(find_path(graph, 'aa', 'cc', new Set()),[ 'aa', 'bb', 'cc' ]);
+    assert.deepStrictEqual(find_path(graph, 'cc', 'bb', new Set()),[ 'cc', 'bb' ]);
+    assert.deepStrictEqual(find_path(graph, 'cc', 'cc', new Set()),[ 'cc', 'bb', 'cc' ]);
+    assert.deepStrictEqual(find_path(graph, 'bb', 'bb', new Set()),[ 'bb', 'cc', 'bb' ]);
+    assert.deepStrictEqual(find_path(graph, 'bb', 'aa', new Set()),[]);
+    assert.deepStrictEqual(find_path(graph, 'aa', 'aa', new Set()),[]);
+  });
+
+  it('three nodes perfectly connected', function () {
+    const paths = [
+      ['aa', 'bb'],
+      ['bb', 'cc'],
+      ['cc', 'aa'],
+    ];
+    const graph = generateGraph(paths);
+    assert.deepStrictEqual(find_path(graph, 'aa', 'bb', new Set()),[ 'aa', 'bb' ]);
+    assert.deepStrictEqual(find_path(graph, 'bb', 'cc', new Set()),[ 'bb', 'cc' ]);
+    assert.deepStrictEqual(find_path(graph, 'aa', 'cc', new Set()),[ 'aa', 'bb', 'cc' ]);
+    assert.deepStrictEqual(find_path(graph, 'cc', 'bb', new Set()),[ 'cc', 'aa', 'bb' ]);
+    assert.deepStrictEqual(find_path(graph, 'cc', 'cc', new Set()),[ 'cc', 'aa', 'bb', 'cc' ]);
+    assert.deepStrictEqual(find_path(graph, 'bb', 'bb', new Set()),[ 'bb', 'cc', 'aa', 'bb' ]);
+    assert.deepStrictEqual(find_path(graph, 'bb', 'aa', new Set()),[ 'bb', 'cc', 'aa' ]);
+    assert.deepStrictEqual(find_path(graph, 'aa', 'aa', new Set()),[ 'aa', 'bb', 'cc', 'aa' ]);
   });
 });
